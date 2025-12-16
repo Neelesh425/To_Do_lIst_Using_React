@@ -1,3 +1,4 @@
+// TaskForm/index.jsx
 import { useState, useEffect } from 'react';
 import './index.scss';
 
@@ -6,56 +7,69 @@ const TaskForm = ({ onSubmit, onCancel, initialTask }) => {
     title: '',
     description: '',
     priority: 'medium',
-    dueDate: ''
+    dueDate: '',
+    category: ''
   });
+
+  const [errors, setErrors] = useState({});
 
   useEffect(() => {
     if (initialTask) {
-      setFormData({
-        title: initialTask.title || '',
-        description: initialTask.description || '',
-        priority: initialTask.priority || 'medium',
-        dueDate: initialTask.dueDate || ''
-      });
+      setFormData(initialTask);
     }
   }, [initialTask]);
 
   const handleChange = (e) => {
-    setFormData({
-      ...formData,
-      [e.target.name]: e.target.value
-    });
+    const { name, value } = e.target;
+    setFormData(prev => ({
+      ...prev,
+      [name]: value
+    }));
+    if (errors[name]) {
+      setErrors(prev => ({
+        ...prev,
+        [name]: ''
+      }));
+    }
+  };
+
+  const validate = () => {
+    const newErrors = {};
+    if (!formData.title.trim()) {
+      newErrors.title = 'Title is required';
+    }
+    if (!formData.dueDate) {
+      newErrors.dueDate = 'Due date is required';
+    }
+    setErrors(newErrors);
+    return Object.keys(newErrors).length === 0;
   };
 
   const handleSubmit = (e) => {
     e.preventDefault();
-    if (!formData.title.trim()) return;
-
-    if (initialTask) {
-      onSubmit({ ...initialTask, ...formData });
-    } else {
+    if (validate()) {
       onSubmit(formData);
+      setFormData({
+        title: '',
+        description: '',
+        priority: 'medium',
+        dueDate: '',
+        category: ''
+      });
     }
-
-    setFormData({
-      title: '',
-      description: '',
-      priority: 'medium',
-      dueDate: ''
-    });
   };
 
   return (
     <div className="task-form-overlay">
       <div className="task-form">
         <div className="task-form__header">
-          <h2>{initialTask ? 'Edit Task' : 'New Task'}</h2>
-          <button className="close-btn" onClick={onCancel}>×</button>
+          <h2>{initialTask ? 'Edit Task' : 'Create New Task'}</h2>
+          <button className="task-form__close" onClick={onCancel}>×</button>
         </div>
 
         <form onSubmit={handleSubmit}>
-          <div className="form-group">
-            <label htmlFor="title">Task Title *</label>
+          <div className="task-form__group">
+            <label htmlFor="title">Title *</label>
             <input
               type="text"
               id="title"
@@ -63,11 +77,12 @@ const TaskForm = ({ onSubmit, onCancel, initialTask }) => {
               value={formData.title}
               onChange={handleChange}
               placeholder="Enter task title"
-              required
+              className={errors.title ? 'error' : ''}
             />
+            {errors.title && <span className="task-form__error">{errors.title}</span>}
           </div>
 
-          <div className="form-group">
+          <div className="task-form__group">
             <label htmlFor="description">Description</label>
             <textarea
               id="description"
@@ -79,8 +94,8 @@ const TaskForm = ({ onSubmit, onCancel, initialTask }) => {
             />
           </div>
 
-          <div className="form-row">
-            <div className="form-group">
+          <div className="task-form__row">
+            <div className="task-form__group">
               <label htmlFor="priority">Priority</label>
               <select
                 id="priority"
@@ -94,23 +109,37 @@ const TaskForm = ({ onSubmit, onCancel, initialTask }) => {
               </select>
             </div>
 
-            <div className="form-group">
-              <label htmlFor="dueDate">Due Date</label>
+            <div className="task-form__group">
+              <label htmlFor="dueDate">Due Date *</label>
               <input
                 type="date"
                 id="dueDate"
                 name="dueDate"
                 value={formData.dueDate}
                 onChange={handleChange}
+                className={errors.dueDate ? 'error' : ''}
               />
+              {errors.dueDate && <span className="task-form__error">{errors.dueDate}</span>}
             </div>
           </div>
 
+          <div className="task-form__group">
+            <label htmlFor="category">Category</label>
+            <input
+              type="text"
+              id="category"
+              name="category"
+              value={formData.category}
+              onChange={handleChange}
+              placeholder="e.g., Work, Personal, Shopping"
+            />
+          </div>
+
           <div className="task-form__actions">
-            <button type="button" onClick={onCancel} className="cancel-btn">
+            <button type="button" className="task-form__btn task-form__btn--cancel" onClick={onCancel}>
               Cancel
             </button>
-            <button type="submit" className="submit-btn">
+            <button type="submit" className="task-form__btn task-form__btn--submit">
               {initialTask ? 'Update Task' : 'Create Task'}
             </button>
           </div>
