@@ -1,9 +1,11 @@
 import { useState } from 'react';
 import { useNavigate, Link } from 'react-router-dom';
+import { useAuth } from '../../context/AuthContext'; // Import useAuth
 import './index.scss';
 
 const SignUp = () => {
   const navigate = useNavigate();
+  const { signup } = useAuth(); // Get signup function from context
   const [formData, setFormData] = useState({
     name: '',
     email: '',
@@ -11,6 +13,7 @@ const SignUp = () => {
     confirmPassword: ''
   });
   const [error, setError] = useState('');
+  const [loading, setLoading] = useState(false); // Add loading state
 
   const handleChange = (e) => {
     setFormData({
@@ -19,7 +22,7 @@ const SignUp = () => {
     });
   };
 
-  const handleSubmit = (e) => {
+  const handleSubmit = async (e) => {
     e.preventDefault();
     setError('');
 
@@ -39,12 +42,20 @@ const SignUp = () => {
       return;
     }
 
-    // Add your registration logic here
-    localStorage.setItem('user', JSON.stringify({ 
+    // Call the backend API
+    setLoading(true);
+    const result = await signup({
       name: formData.name,
-      email: formData.email 
-    }));
-    navigate('/todo');
+      email: formData.email,
+      password: formData.password
+    });
+    setLoading(false);
+
+    if (result.success) {
+      navigate('/todo');
+    } else {
+      setError(result.error);
+    }
   };
 
   return (
@@ -110,8 +121,8 @@ const SignUp = () => {
             />
           </div>
 
-          <button type="submit" className="signup__button">
-            Sign Up
+          <button type="submit" className="signup__button" disabled={loading}>
+            {loading ? 'Signing Up...' : 'Sign Up'}
           </button>
 
           <div className="signup__footer">

@@ -22,10 +22,3 @@ app.use('/api/tasks', require('./routes/tasks'));
 
 const PORT = process.env.PORT || 5000;
 app.listen(PORT, () => console.log(`Server running on port ${PORT}`));
-```
-
-**backend/.env**
-```
-MONGO_URI=mongodb://localhost:27017/taskscheduler
-JWT_SECRET=your_super_secret_jwt_key_change_this
-PORT=5000
