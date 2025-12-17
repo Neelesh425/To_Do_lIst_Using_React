@@ -1,10 +1,9 @@
+// Sidebar/index.jsx - Updated with props support
 import { NavLink, useNavigate } from 'react-router-dom';
-import { useState } from 'react';
 import './index.scss';
 
-const Sidebar = () => {
+const Sidebar = ({ isOpen, onToggle }) => {
   const navigate = useNavigate();
-  const [isOpen, setIsOpen] = useState(true);
 
   const handleLogout = () => {
     // Add your logout logic here
@@ -16,10 +15,10 @@ const Sidebar = () => {
     <>
       <button 
         className="sidebar__toggle"
-        onClick={() => setIsOpen(!isOpen)}
+        onClick={onToggle}
         aria-label="Toggle Sidebar"
       >
-        ☰
+        {isOpen ? '✕' : '☰'}
       </button>
       
       <aside className={`sidebar ${isOpen ? 'open' : 'closed'}`}>
@@ -31,6 +30,7 @@ const Sidebar = () => {
           <NavLink 
             to="/todo" 
             className={({ isActive }) => isActive ? 'active' : ''}
+            onClick={() => window.innerWidth <= 768 && onToggle?.()}
           >
             <span className="icon">📋</span>
             <span className="text">My Tasks</span>
@@ -39,6 +39,7 @@ const Sidebar = () => {
           <NavLink 
             to="/profile" 
             className={({ isActive }) => isActive ? 'active' : ''}
+            onClick={() => window.innerWidth <= 768 && onToggle?.()}
           >
             <span className="icon">👤</span>
             <span className="text">Profile</span>
@@ -47,7 +48,7 @@ const Sidebar = () => {
 
         <div className="sidebar__footer">
           <button onClick={handleLogout} className="logout-btn">
-            <span className="icon">🚪</span>
+            <span className="icon"></span>
             <span className="text">Logout</span>
           </button>
         </div>

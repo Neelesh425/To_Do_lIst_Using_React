@@ -212,4 +212,23 @@ router.put('/password', [
   }
 });
 
+// @route   DELETE /api/auth/account
+// @desc    Delete user account
+router.delete('/account', require('../middleware/auth'), async (req, res) => {
+  try {
+    const Task = require('../models/Task');
+    
+    // Delete all user's tasks
+    await Task.deleteMany({ user: req.user.id });
+    
+    // Delete user account
+    await User.findByIdAndDelete(req.user.id);
+
+    res.json({ message: 'Account deleted successfully' });
+  } catch (err) {
+    console.error(err.message);
+    res.status(500).send('Server error');
+  }
+});
+
 module.exports = router;

@@ -8,7 +8,9 @@ import SignUp from './components/SignUp';
 import ProtectedRoute from './components/ProtectedRoute';
 import Profile from './components/Profile';
 
-function App() {
+
+    
+ function App() {
   useEffect(() => {
     document.title = "Task_Scheduler";
   }, []);

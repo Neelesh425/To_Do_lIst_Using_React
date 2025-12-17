@@ -1,7 +1,6 @@
 import axios from 'axios';
 
 const API_URL = 'http://localhost:5000/api';
-
 // Create axios instance
 const api = axios.create({
   baseURL: API_URL,
@@ -30,7 +29,8 @@ export const authAPI = {
   signin: (data) => api.post('/auth/signin', data),
   getMe: () => api.get('/auth/me'),
   updateProfile: (data) => api.put('/auth/profile', data),
-  changePassword: (data) => api.put('/auth/password', data)
+  changePassword: (data) => api.put('/auth/password', data),
+  deleteAccount: () => api.delete('/auth/account')
 };
 
 // Task APIs

@@ -1,9 +1,11 @@
 import { useState, useEffect } from 'react';
+import { useNavigate } from 'react-router-dom';
 import { useAuth } from '../../context/AuthContext';
 import { authAPI, taskAPI } from '../../services/api';
 import './index.scss';
 
 const Profile = () => {
+  const navigate = useNavigate();
   const { user, logout } = useAuth();
   const [stats, setStats] = useState({
     total: 0,
@@ -24,6 +26,11 @@ const Profile = () => {
   });
   const [message, setMessage] = useState({ type: '', text: '' });
   const [loading, setLoading] = useState(false);
+  
+  // Modal states
+  const [showLogoutModal, setShowLogoutModal] = useState(false);
+  const [showDeleteModal, setShowDeleteModal] = useState(false);
+  const [deleteConfirmEmail, setDeleteConfirmEmail] = useState('');
 
   useEffect(() => {
     loadStats();
@@ -65,7 +72,7 @@ const Profile = () => {
       await authAPI.updateProfile({ name });
       setMessage({ type: 'success', text: 'Name updated successfully!' });
       setIsEditingName(false);
-      window.location.reload(); // Reload to update user in context
+      window.location.reload();
     } catch (error) {
       setMessage({ type: 'error', text: error.response?.data?.message || 'Failed to update name' });
     } finally {
@@ -98,6 +105,28 @@ const Profile = () => {
     } catch (error) {
       setMessage({ type: 'error', text: error.response?.data?.message || 'Failed to change password' });
     } finally {
+      setLoading(false);
+    }
+  };
+
+  const handleLogout = () => {
+    logout();
+    navigate('/signin');
+  };
+
+  const handleDeleteAccount = async () => {
+    if (deleteConfirmEmail !== user?.email) {
+      setMessage({ type: 'error', text: 'Email does not match' });
+      return;
+    }
+
+    setLoading(true);
+    try {
+      await authAPI.deleteAccount();
+      logout();
+      navigate('/');
+    } catch (error) {
+      setMessage({ type: 'error', text: error.response?.data?.message || 'Failed to delete account' });
       setLoading(false);
     }
   };
@@ -305,18 +334,102 @@ const Profile = () => {
 
         {/* Danger Zone */}
         <div className="profile__section profile__section--danger">
-          <h2 className="profile__section-title">Account Status</h2>
+          <h2 className="profile__section-title">Danger Zone</h2>
+          
           <div className="profile__danger">
             <div>
               <h3>Logout</h3>
               <p>Sign out from your account</p>
             </div>
-            <button className="btn-danger" onClick={logout}>
+            <button className="btn-warning" onClick={() => setShowLogoutModal(true)}>
               Logout
+            </button>
+          </div>
+
+          <div className="profile__danger">
+            <div>
+              <h3>Delete Account</h3>
+              <p>Permanently delete your account and all data</p>
+            </div>
+            <button className="btn-danger" onClick={() => setShowDeleteModal(true)}>
+              Delete Account
             </button>
           </div>
         </div>
       </div>
+
+      {/* Logout Confirmation Modal */}
+      {showLogoutModal && (
+        <div className="modal-overlay" onClick={() => setShowLogoutModal(false)}>
+          <div className="modal" onClick={(e) => e.stopPropagation()}>
+            <div className="modal__header">
+              <h2>Confirm Logout</h2>
+              <button className="modal__close" onClick={() => setShowLogoutModal(false)}>
+                ×
+              </button>
+            </div>
+            <div className="modal__body">
+              <p>Are you sure you want to logout?</p>
+            </div>
+            <div className="modal__footer">
+              <button className="btn-secondary" onClick={() => setShowLogoutModal(false)}>
+                Cancel
+              </button>
+              <button className="btn-primary" onClick={handleLogout}>
+                Yes, Logout
+              </button>
+            </div>
+          </div>
+        </div>
+      )}
+
+      {/* Delete Account Confirmation Modal */}
+      {showDeleteModal && (
+        <div className="modal-overlay" onClick={() => setShowDeleteModal(false)}>
+          <div className="modal" onClick={(e) => e.stopPropagation()}>
+            <div className="modal__header">
+              <h2>Delete Account</h2>
+              <button className="modal__close" onClick={() => setShowDeleteModal(false)}>
+                ×
+              </button>
+            </div>
+            <div className="modal__body">
+              <div className="modal__warning">
+                <span className="modal__warning-icon">⚠️</span>
+                <p><strong>Warning:</strong> This action cannot be undone. All your tasks and data will be permanently deleted.</p>
+              </div>
+              <p className="modal__confirm-text">
+                Please type <strong>{user?.email}</strong> to confirm:
+              </p>
+              <input
+                type="email"
+                value={deleteConfirmEmail}
+                onChange={(e) => setDeleteConfirmEmail(e.target.value)}
+                placeholder="Enter your email"
+                className="profile__input"
+              />
+            </div>
+            <div className="modal__footer">
+              <button 
+                className="btn-secondary" 
+                onClick={() => {
+                  setShowDeleteModal(false);
+                  setDeleteConfirmEmail('');
+                }}
+              >
+                Cancel
+              </button>
+              <button 
+                className="btn-danger" 
+                onClick={handleDeleteAccount}
+                disabled={loading || deleteConfirmEmail !== user?.email}
+              >
+                {loading ? 'Deleting...' : 'Delete Account'}
+              </button>
+            </div>
+          </div>
+        </div>
+      )}
     </div>
   );
 };

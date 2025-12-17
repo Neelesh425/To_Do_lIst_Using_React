@@ -1,4 +1,4 @@
-// TaskForm/index.jsx
+// TaskForm/index.jsx - Updated with enhanced styling support
 import { useState, useEffect } from 'react';
 import './index.scss';
 
@@ -60,11 +60,11 @@ const TaskForm = ({ onSubmit, onCancel, initialTask }) => {
   };
 
   return (
-    <div className="task-form-overlay">
-      <div className="task-form">
+    <div className="task-form-overlay" onClick={onCancel}>
+      <div className="task-form" onClick={(e) => e.stopPropagation()}>
         <div className="task-form__header">
           <h2>{initialTask ? 'Edit Task' : 'Create New Task'}</h2>
-          <button className="task-form__close" onClick={onCancel}>×</button>
+          <button className="task-form__close" onClick={onCancel} type="button">×</button>
         </div>
 
         <form onSubmit={handleSubmit}>
@@ -89,7 +89,7 @@ const TaskForm = ({ onSubmit, onCancel, initialTask }) => {
               name="description"
               value={formData.description}
               onChange={handleChange}
-              placeholder="Enter task description"
+              placeholder="Add more details about this task..."
               rows="4"
             />
           </div>
@@ -103,9 +103,9 @@ const TaskForm = ({ onSubmit, onCancel, initialTask }) => {
                 value={formData.priority}
                 onChange={handleChange}
               >
-                <option value="low">Low</option>
-                <option value="medium">Medium</option>
-                <option value="high">High</option>
+                <option value="low">🟢 Low Priority</option>
+                <option value="medium">🟡 Medium Priority</option>
+                <option value="high">🔴 High Priority</option>
               </select>
             </div>
 

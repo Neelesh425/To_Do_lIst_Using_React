@@ -27,10 +27,10 @@ const TaskItem = ({ task, onToggle, onEdit, onDelete }) => {
           type="checkbox"
           id={`task-${task.id}`}
           checked={task.completed}
-          onChange={() => onToggle(task.id)}
+          onChange={() => onToggle(task._id)}
           className="task-item__checkbox"
         />
-        <label htmlFor={`task-${task.id}`} className="task-item__checkbox-label"></label>
+        
       </div>
 
       <div className="task-item__content">
@@ -75,7 +75,7 @@ const TaskItem = ({ task, onToggle, onEdit, onDelete }) => {
             </button>
             <button
               className="task-item__action task-item__action--delete"
-              onClick={() => onDelete(task.id)}
+              onClick={() => onDelete(task._id)}
               title="Delete task"
             >
               <svg width="16" height="16" viewBox="0 0 16 16" fill="none">

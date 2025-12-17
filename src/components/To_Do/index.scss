@@ -1,109 +1,224 @@
-.todo {
-  max-width: 1200px;
-  margin: 0 auto;
+// To_Do/index.scss - Modern Rich Design with Dark Mode
 
+.todo {
+  animation: fadeInUp var(--transition-slow) ease-out;
+  
   &__header {
     display: flex;
     justify-content: space-between;
     align-items: center;
-    margin-bottom: 2rem;
-
+    margin-bottom: var(--spacing-xl);
+    gap: var(--spacing-md);
+    flex-wrap: wrap;
+    
     h1 {
+      font-size: 36px;
+      font-weight: 700;
+      color: var(--text-primary);
       margin: 0;
-      font-size: 2.5rem;
-      color: white;
-      text-shadow: 2px 2px 4px rgba(0, 0, 0, 0.2);
+      position: relative;
+      
+      &::after {
+        content: '';
+        position: absolute;
+        bottom: -8px;
+        left: 0;
+        width: 60px;
+        height: 4px;
+        background: var(--accent-gradient);
+        border-radius: 2px;
+        animation: expandWidth 0.6s ease-out;
+      }
+      
+      @media (max-width: 768px) {
+        font-size: 28px;
+      }
     }
   }
-
+  
   &__add-btn {
-    padding: 0.875rem 1.75rem;
-    background: white;
-    color: #667eea;
+    padding: 14px 28px;
+    background: var(--accent-gradient);
+    color: white;
     border: none;
-    border-radius: 12px;
-    font-size: 1rem;
+    border-radius: var(--radius-md);
+    font-size: 16px;
     font-weight: 600;
     cursor: pointer;
-    box-shadow: 0 4px 12px rgba(0, 0, 0, 0.15);
-    transition: all 0.3s ease;
-
+    box-shadow: 0 4px 12px rgba(102, 126, 234, 0.3);
+    transition: all var(--transition-base);
+    position: relative;
+    overflow: hidden;
+    
+    &::before {
+      content: '';
+      position: absolute;
+      top: 50%;
+      left: 50%;
+      width: 0;
+      height: 0;
+      border-radius: 50%;
+      background: rgba(255, 255, 255, 0.3);
+      transform: translate(-50%, -50%);
+      transition: width 0.6s, height 0.6s;
+    }
+    
     &:hover {
       transform: translateY(-2px);
-      box-shadow: 0 6px 16px rgba(0, 0, 0, 0.2);
+      box-shadow: 0 8px 20px rgba(102, 126, 234, 0.4);
+      
+      &::before {
+        width: 300px;
+        height: 300px;
+      }
     }
-
+    
     &:active {
       transform: translateY(0);
     }
+    
+    @media (max-width: 768px) {
+      padding: 12px 24px;
+      font-size: 14px;
+    }
   }
-
+  
   &__filters {
     display: flex;
-    gap: 1rem;
-    margin-bottom: 2rem;
-    background: rgba(255, 255, 255, 0.15);
-    padding: 0.5rem;
-    border-radius: 12px;
-    backdrop-filter: blur(10px);
-
+    gap: var(--spacing-md);
+    margin-bottom: var(--spacing-xl);
+    background: var(--bg-secondary);
+    padding: var(--spacing-sm);
+    border-radius: var(--radius-lg);
+    box-shadow: var(--shadow-md);
+    flex-wrap: wrap;
+    
     button {
       flex: 1;
-      padding: 0.75rem 1rem;
+      min-width: 120px;
+      padding: 12px 20px;
       background: transparent;
-      color: white;
+      color: var(--text-secondary);
       border: none;
-      border-radius: 8px;
+      border-radius: var(--radius-md);
+      font-size: 14px;
       font-weight: 600;
       cursor: pointer;
-      transition: all 0.3s ease;
-
-      &:hover {
-        background: rgba(255, 255, 255, 0.2);
+      transition: all var(--transition-base);
+      position: relative;
+      
+      &::after {
+        content: '';
+        position: absolute;
+        bottom: 0;
+        left: 50%;
+        transform: translateX(-50%) scaleX(0);
+        width: 80%;
+        height: 3px;
+        background: var(--accent-gradient);
+        border-radius: 2px 2px 0 0;
+        transition: transform var(--transition-base);
       }
-
+      
+      &:hover {
+        color: var(--text-primary);
+        background: var(--bg-tertiary);
+      }
+      
       &.active {
-        background: white;
-        color: #667eea;
+        color: var(--accent-primary);
+        background: rgba(102, 126, 234, 0.1);
+        
+        &::after {
+          transform: translateX(-50%) scaleX(1);
+        }
+      }
+      
+      @media (max-width: 768px) {
+        min-width: 100px;
+        padding: 10px 16px;
+        font-size: 13px;
       }
     }
   }
-
+  
   &__list {
-    display: grid;
-    gap: 1rem;
+    display: flex;
+    flex-direction: column;
+    gap: var(--spacing-md);
+    animation: staggerIn 0.5s ease-out;
   }
-
+  
   &__empty {
     text-align: center;
-    padding: 4rem 2rem;
-    background: rgba(255, 255, 255, 0.15);
-    border-radius: 16px;
-    backdrop-filter: blur(10px);
-
+    padding: var(--spacing-2xl) var(--spacing-lg);
+    background: var(--bg-secondary);
+    border-radius: var(--radius-lg);
+    box-shadow: var(--shadow-md);
+    animation: fadeIn 0.5s ease-out;
+    
     p {
-      color: white;
-      font-size: 1.2rem;
+      font-size: 18px;
+      color: var(--text-muted);
       margin: 0;
+      
+      &::before {
+        content: '📝';
+        display: block;
+        font-size: 48px;
+        margin-bottom: var(--spacing-md);
+        animation: float 3s ease-in-out infinite;
+      }
     }
   }
 }
 
-@media (max-width: 768px) {
-  .todo {
-    &__header {
-      flex-direction: column;
-      gap: 1rem;
-      align-items: stretch;
+// Animations
+@keyframes fadeInUp {
+  from {
+    opacity: 0;
+    transform: translateY(30px);
+  }
+  to {
+    opacity: 1;
+    transform: translateY(0);
+  }
+}
 
-      h1 {
-        font-size: 2rem;
-        text-align: center;
-      }
-    }
+@keyframes expandWidth {
+  from {
+    width: 0;
+  }
+  to {
+    width: 60px;
+  }
+}
 
-    &__filters {
-      flex-direction: column;
-    }
+@keyframes staggerIn {
+  from {
+    opacity: 0;
+  }
+  to {
+    opacity: 1;
+  }
+}
+
+@keyframes fadeIn {
+  from {
+    opacity: 0;
+    transform: scale(0.95);
+  }
+  to {
+    opacity: 1;
+    transform: scale(1);
+  }
+}
+
+@keyframes float {
+  0%, 100% {
+    transform: translateY(0);
+  }
+  50% {
+    transform: translateY(-10px);
   }
 }
